@@ -19,8 +19,17 @@ module.exports = {
         },
         allowNull: false,
       },
+      nomeCrianca: {
+        type: Sequelize.STRING
+      },
       mes: {
         type: Sequelize.STRING
+      },
+      data: {
+        type: Sequelize.DATE
+      },
+      dataValidade: {
+        type: Sequelize.DATE
       },
       totalPago: {
         type: Sequelize.DOUBLE

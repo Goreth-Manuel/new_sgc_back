@@ -130,7 +130,7 @@ router.get("/matricula/:id", async (req, res) => {
   const existingMatricula = await Matricula.findByPk(id);
 
   if (!existingMatricula) {
-    return res.status(404).json({ mensagem: "Inscrição não encontrada" });
+    return res.status(404).json({ mensagem: "Matricula não encontrada" });
   }
 
   //Recuperar o registo do banco de dados
@@ -159,7 +159,7 @@ router.get("/matricula/:id", async (req, res) => {
   } else {
     // Pausar o processamento e retornar a mensagem de erro
     return res.status(400).json({
-      mensagem: "Inscrição não encontrada",
+      mensagem: "Matricula não encontrada",
     });
   }
 });
@@ -183,10 +183,10 @@ router.put("/matricula/:id", async (req, res) => {
     // Atualize os dados no banco de dados
     await Matricula.update(dados, { where: { id: matriculaId } });
 
-    return res.json({ mensagem: "Inscrição editada com sucesso!" });
+    return res.json({ mensagem: "Matricula editada com sucesso!" });
   } catch (error) {
     console.error(error);
-    return res.status(400).json({ mensagem: "Erro: Inscrição não editada!" });
+    return res.status(400).json({ mensagem: "Erro: Matricula não editada!" });
   }
 });
 
@@ -206,10 +206,10 @@ router.delete("/matricula/:id", async (req, res) => {
     // Apague o usuário no banco de dados
     await Matricula.destroy({ where: { id } });
 
-    return res.json({ mensagem: "Inscrição apagada com sucesso" });
+    return res.json({ mensagem: "Matricula apagada com sucesso" });
   } catch (error) {
     console.error(error);
-    return res.status(400).json({ mensagem: "Erro: Inscrição não apagada" });
+    return res.status(400).json({ mensagem: "Erro: Matricula não apagada" });
   }
 });
 

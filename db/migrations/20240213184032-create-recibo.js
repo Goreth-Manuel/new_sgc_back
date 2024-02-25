@@ -19,6 +19,12 @@ module.exports = {
         },
         allowNull: false,
       },
+      nomeCrianca: {
+        type: Sequelize.STRING
+      },
+      data: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

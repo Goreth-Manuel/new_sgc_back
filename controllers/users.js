@@ -5,15 +5,15 @@ const initUsuarioModel = require("../db/models/user");
 const config = require("../db/config/config");
 
 const environment = process.env.NODE_ENV || "development";
-const dbConfig = config[environment];
+//const dbConfig = config;
 
 const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
+  config.database,
+  config.username,
+  config.password,
   {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
+    host: config.host,
+    dialect: config.dialect,
   }
 );
 

@@ -36,12 +36,20 @@ const users = require("./controllers/users");
 const authentication = require("./controllers/authentication");
 const inscricao = require("./controllers/inscricaoControllers");
 const matricula = require("./controllers/matriculaControllers");
+const seccao = require("./controllers/seccaoControllers");
+const sala = require("./controllers/salaControllers");
+const serie = require("./controllers/serieControllers");
+
+require("./db/index");
 
 //criar as rotas
 app.use("/auth", authentication);
 app.use("/", users);
 app.use("/", inscricao);
 app.use("/", matricula);
+app.use("/", seccao);
+app.use("/", sala);
+app.use("/", serie);
 
 app.listen(8080, () => {
   console.log("Servidor rodando na porta 8080");

@@ -13,12 +13,12 @@ const environment = process.env.NODE_ENV || "development";
 const dbConfig = config[environment];
 
 const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
+  config.database,
+  config.username,
+  config.password,
   {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
+    host: config.host,
+    dialect: config.dialect,
   }
 );
 
@@ -74,7 +74,7 @@ router.post("/register", async (req, res) => {
     });
 
     // Gere um token JWT para o novo usuário
-    const token = sign({ id: newUser.id }, process.env.SECRET_JWT, {
+    const token = sign({ id: newUser.id }, 'secret', {
       expiresIn: 3600, // Tempo de expiração do token em segundos
     });
 
@@ -120,7 +120,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Senha incorrecta" });
     }
 
-    const token = sign({ id: usuario.id }, process.env.SECRET_JWT, {
+    const token = sign({ id: usuario.id }, 'secret', {
       expiresIn: 3600,
     });
 

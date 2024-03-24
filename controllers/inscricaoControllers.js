@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Sequelize } = require("sequelize");
-const initInscricaoModel = require("../db/models/inscricaoModels");
+const Inscricao = require("../db/models/inscricaoModels");
 const config = require("../db/config/config");
 const yup = require("yup");
 
@@ -24,16 +24,16 @@ const environment = process.env.NODE_ENV || "development";
 const dbConfig = config[environment];
 
 const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
+  config.database,
+  config.username,
+  config.password,
   {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
+    host: config.host,
+    dialect: config.dialect,
   }
 );
 
-const Inscricao = initInscricaoModel(sequelize);
+//const Inscricao = initInscricaoModel(sequelize);
 
 //Registar inscricao
 router.post(

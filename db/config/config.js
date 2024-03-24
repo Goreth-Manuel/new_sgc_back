@@ -1,10 +1,22 @@
-require('dotenv').config();
+//require('dotenv').config();
 const pg = require("pg");
 
+module.exports = {
+  dialect: "postgres",
+  dialectModule: pg,
+  host: "flora.db.elephantsql.com",
+  username: "dglpmmgu",
+  password: "XnHvdalyRXVR_gBgJ7DucysI6sn0QvAX",
+  database: "dglpmmgu",
+  define: {
+    timestamps: false,
+  }
+}
 
+/*
 module.exports = {
   "development": {
-    "dialect": process.env.DB_DIALECT,
+    "dialect": "postgres",
     "dialectModule": pg,
     "host": process.env.DB_HOST,
     "username": process.env.DB_USER,
@@ -15,7 +27,7 @@ module.exports = {
     },
   },
   "test": {
-    "dialect": process.env.DB_DIALECT,
+    "dialect": "postgres",
     "dialectModule": pg,
     "host": process.env.DB_HOST,
     "username": process.env.DB_USER,
@@ -26,7 +38,7 @@ module.exports = {
     },
   },
   "production": {
-    "dialect": process.env.DB_DIALECT,
+    "dialect": "postgres",
     "dialectModule": pg,
     "host": process.env.DB_HOST,
     "username": process.env.DB_USER,
@@ -37,3 +49,4 @@ module.exports = {
     },
   }
 }
+*/

@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { Sequelize } = require("sequelize");
-const initMatriculaModel = require("../db/models/matriculaModels");
+const Matricula = require("../db/models/matriculaModels");
 const config = require("../db/config/config");
 const yup = require("yup");
 
+
 const multer = require("multer");
+const Inscricao = require("../db/models/inscricaoModels");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -24,24 +26,26 @@ const environment = process.env.NODE_ENV || "development";
 const dbConfig = config[environment];
 
 const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
+  config.database,
+  config.username,
+  config.password,
   {
-    host: dbConfig.host,
-    dialect: dbConfig.dialect,
+    host: config.host,
+    dialect: config.dialect,
   }
 );
 
-const Matricula = initMatriculaModel(sequelize);
+//const Matricula = initMatriculaModel(sequelize);
 
 //Registar matricula
 router.post(
   "/matricula",
+  /*
   upload.fields([
     { name: "comprovativoPagamento" },
     { name: "fotografiaCrianca" },
   ]),
+  */
   async (req, res) => {
     try {
       // Validar os dados enviados pelo formulário
@@ -52,25 +56,28 @@ router.post(
         inscricaoID: yup
           .string("Erro: Id da inscricao obrigatório")
           .required("Id da inscricao obrigatório"),
+          comprovativoPagamento: yup
+          .string("Erro: Comprovativo de pagamento é obrigatório")
+          .required("Comprovativo de pagamento é obrigatório"),
+          fotografiaCrianca: yup
+          .string("Erro: Fotografia é obrigatório")
+          .required("Fotografia é obrigatório"),
     
       });
 
       await schema.validate(req.body, { abortEarly: false });
 
-      if (
-        req.files &&
-        req.files["comprovativoPagamento"] &&
-        req.files["comprovativoPagamento"].length > 0 &&
-        req.files["fotografiaCrianca"] &&
-        req.files["fotografiaCrianca"].length > 0 
-      ) {
+      if (req.body) {
         const newMatricula = await Matricula.create({
-          moradaCrianca: req.body.moradaCrianca,
           inscricaoID: req.body.inscricaoID,
           moradaCrianca: req.body.moradaCrianca,
+          fotografiaCrianca: req.body.fotografiaCrianca,
+          comprovativoPagamento: req.body.comprovativoPagamento,
+          
+          /*
           comprovativoPagamento: req.files["comprovativoPagamento"][0].path,
           fotografiaCrianca: req.files["fotografiaCrianca"][0].path,
-          
+          */
           // Outros campos de usuário, se houverem
         });
 
@@ -99,15 +106,16 @@ router.get("/matricula", async (req, res) => {
     // Ordenar os registros pela coluna id na forma decrescente
     //order: [['id', 'ASC']]
     attributes: [
-      "id",
-      "moradaCrianca",
       "inscricaoID",
-      "comprovativoPagamento",
+      "moradaCrianca",
       "fotografiaCrianca",
+      "comprovativoPagamento",
       "createdAt",
       "updatedAt",
     ],
   });
+
+  
 
   if (matricula) {
     return res.json({
@@ -137,11 +145,10 @@ router.get("/matricula/:id", async (req, res) => {
   const matricula = await Matricula.findOne({
     // Indicar quais colunas recuperar
     attributes: [
-      "id",
-      "moradaCrianca",
       "inscricaoID",
-      "comprovativoPagamento",
+      "moradaCrianca",
       "fotografiaCrianca",
+      "comprovativoPagamento",
       "createdAt",
       "updatedAt",
     ],
@@ -237,5 +244,56 @@ router.put("/actualizar_matricula/:id", async (req, res) => {
   }
 });
 
+// rota estado
+router.put("/actualizar_serie/:id", async (req, res) => {
+  try {
+    // Receba o ID da inscrição e o novo estado da URL e do corpo da requisição
+    const { id } = req.params;
+    const { serie } = req.body; // Adicione outros campos aqui se necessário
+
+    // Verifique se a inscrição com o ID especificado existe
+    const existingSerie = await Matricula.findByPk(id);
+
+    if (!existingSerie) {
+      return res.status(404).json({ mensagem: "Matricula não encontrada" });
+    }
+
+    // Atualize o estado da inscrição no banco de dados
+    await existingSerie.update({ SerieId: serie }); // Atualize outros campos aqui se necessário
+
+    return res.json({ mensagem: "Serie atualizado com sucesso" });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ mensagem: "Erro ao atualizar a serie da Matricula" });
+  }
+});
+
+// Rota para estatísticas
+router.get('/estatisticas', async (req, res) => {
+  try {
+    // Recuperar todas as matrículas
+    const matricula = await Matricula.findAll();
+    const inscricao = await Inscricao.findAll();
+
+    // Contar o número de inscrições realizadas, rejeitadas e aprovadas
+    const totalInscricoes = inscricao.length;
+    const inscricoesRejeitadas = inscricao.filter(inscricao => inscricao.estado === false).length;
+    const inscricoesAprovadas = inscricao.filter(inscricao => inscricao.estado === true).length;
+
+    // Contar o número de crianças matriculadas
+    const criancasMatriculadas = matricula.length
+
+     // Retornar as estatísticas como resposta JSON
+     return res.json({
+      totalInscricoes,
+      inscricoesRejeitadas,
+      inscricoesAprovadas,
+      criancasMatriculadas,
+    });
+  } catch (error) {
+    console.error('Erro ao recuperar estatísticas:', error);
+    return res.status(500).json({ mensagem: 'Erro ao recuperar estatísticas' });
+  }
+});
 // Exportar a instrução que está dentro da costante router
 module.exports = router;
